@@ -4,6 +4,36 @@
 
 {% block content %}
 
-<h1>Sign Up</h1>
+<form method="POST">
+    <h2 align="center" class="my-3">Sign Up</h2>
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" 
+            class="form-control" 
+            id="username" 
+            name="username" 
+            placeholder="Enter username">
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" 
+            class="form-control" 
+            id="password" 
+            name="password" 
+            placeholder="Enter password">
+    </div>
+
+    <div class="mb-3">
+        <label for="passwordConfirmation" class="form-label">Confirm Password</label>
+        <input type="password" 
+            class="form-control" 
+            id="passwordConfirmation" 
+            name="password_confirmation"
+            placeholder="Confirm password">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 
 {% endblock %}
