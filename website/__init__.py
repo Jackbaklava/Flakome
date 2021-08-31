@@ -24,19 +24,19 @@ def create_app():
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
 
-    # create_database(app)
+    from .models import User
 
-    # login_manager = LoginManager()
-    # login_manager.login_view = "auth.login"
-    # login_manager.login_message_category = "error"
-    # login_manager.init_app(app)
+    create_database(app)
 
-    # from .models import User
+    login_manager = LoginManager()
+    login_manager.login_view = "auth.login"
+    login_manager.login_message_category = "error"
+    login_manager.init_app(app)
 
 
-    # @login_manager.user_loader
-    # def load_user(user_id):
-    #     return User.get(user_id)
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
 
 
     return app
