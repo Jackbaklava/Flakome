@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .models import Post
+from .db_config import CharLimits
 from . import db
 
 
@@ -21,11 +22,22 @@ def create_post():
         title = data.get("title")
         body = data.get("body")
 
-        new_post = Post(title=title, body=body)
-        db.session.add(new_post)
-        db.session.commit()
-        flash("Post created.", category="success")
+        title_limits = CharLimits.post["title"]
+        body_limits = CharLimits.post["body"]
 
-        return redirect(url_for("views.home"))
+        if len(title) < title_limits["min"] or len(title) > title_limits["max"]:
+            flash(f"Title must be between {title_limits['min']} and {title_limits['max']} characters long.", category="error")
+
+        elif len(body) < body_limits["min"] or len(body) > body_limits["max"]:
+            flash(f"Body must be between {body_limits['min']} and {body_limits['max']} characters long.", category="error")
+
+        else:
+            new_post = Post(title=title, body=body, author=current_user)
+            db.session.add(new_post)
+            db.session.commit()
+            flash("Post created.", category="success")
+            return redirect(url_for("views.home"))
+
+        return redirect(url_for("views.create_post"))
     
     return render_template("create-post.html")

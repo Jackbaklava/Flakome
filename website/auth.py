@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
+from .db_config import CharLimits
 from .import db
 
 
@@ -43,16 +44,16 @@ def sign_up():
         username = data.get("username")
         password = data.get("password")
         password_confirmation = data["password_confirmation"]
-        
-        if len(username) < 2:
-            flash("Username must be atleast 2 characters long.", category="error")
-        elif len(username) > 63:
-            flash("Username must be shorter than 64 characters.", category="error")
 
-        elif len(password) < 6:
-            flash("Password must be atleast 6 characters long.", category="error")
-        elif len(password) > 127:
-            flash("Password must be shorter than 128 characters.", category="error")
+        username_limits = CharLimits.user["username"]
+        password_limits = CharLimits.user["password"]
+
+        if len(username) < username_limits["min"] or len(username) > username_limits["max"]:
+            flash(f"Username must be between {username_limits['min']} and {username_limits['max']} characters long.", category="error")
+
+        elif len(password) < password_limits["min"] or len(password) > password_limits["max"]:
+            flash(f"Password must be between {password_limits['min']} and {password_limits['max']} characters long.", category="error")
+
         elif password != password_confirmation:
             flash("Passwords don't match. Try again.", category="error")
 
