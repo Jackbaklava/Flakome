@@ -12,6 +12,7 @@
             id="title" 
             name="title"
             placeholder="Enter title"
+            value={{ title_to_display }}
         >
     </div>
 
@@ -22,7 +23,7 @@
             name="body"
             rows="15"
             placeholder="Write something"
-        ></textarea>
+        >{{ body_to_display }}</textarea>
     </div>
 
     <button type="button" class="btn btn-secondary btn-cancel" onclick="redirect('/')">Cancel</button>
