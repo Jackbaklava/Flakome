@@ -2,10 +2,14 @@
     margin-right: 5px;
 }
 
-.btn-create-post {
+.float-right {
     float: right;
 }
 
-.btn-create-post + div {
+.float-right + div {
     clear: both;
+}
+
+.post-author {
+    display: inline;
 }

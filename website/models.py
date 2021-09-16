@@ -4,6 +4,10 @@ from .db_config import CharLimits
 from . import db
 
 
+def current_datetime():
+    return datetime.now() 
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(CharLimits.user["username"]["max"]), unique=True)
@@ -16,4 +20,4 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     title = db.Column(db.String(CharLimits.post["title"]["max"]))
     body = db.Column(db.String(CharLimits.post["body"]["max"]))
-    date = db.Column(db.DateTime(timezone=True), default=datetime.now())
+    date = db.Column(db.DateTime(timezone=True))

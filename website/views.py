@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from .models import Post
+from .models import Post, current_datetime
 from .db_config import CharLimits
 from . import db
 
@@ -11,7 +11,7 @@ views = Blueprint("views", __name__)
 @views.route("/")
 @login_required
 def home():
-    return render_template("home.html")
+    return render_template("home.html", posts=Post.query.order_by(Post.date.desc()).all())
 
 
 @views.route("/create-post", methods=["GET", "POST"])
@@ -34,7 +34,7 @@ def create_post(title="", body=""):
                 category="error")
 
         else:
-            new_post = Post(title=given_title, body=given_body, author=current_user)
+            new_post = Post(title=given_title, body=given_body, author=current_user, date=current_datetime())
             db.session.add(new_post)
             db.session.commit()
             flash("Post created.", category="success")
