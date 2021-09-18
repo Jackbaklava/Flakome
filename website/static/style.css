@@ -13,3 +13,13 @@
 .post-author {
     display: inline;
 }
+
+.btn-delete {
+    display: none;
+    position: absolute;
+    left: 95%;
+}
+
+.card:hover .btn-delete {
+    display: block;
+}
