@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+import json
 from .models import Post, current_datetime
 from .db_config import CharLimits
 from . import db
@@ -47,3 +48,23 @@ def create_post(title="", body=""):
         title_to_display=request.args.get("title"),
         body_to_display=request.args.get("body"),
     )
+
+
+@views.route("/delete-post", methods=["GET", "POST"])
+@login_required
+def delete_post():
+    if request.method == "GET":
+        return redirect(url_for("views.home"))
+
+
+    res = json.loads(request.data)
+    post_id = res["postId"]
+    post = Post.query.get(post_id)
+
+    if post:
+        if post.author_id == current_user.id:
+            db.session.delete(post)
+            db.session.commit()
+            flash("Post successfully deleted.", category="success")
+
+    return ""
