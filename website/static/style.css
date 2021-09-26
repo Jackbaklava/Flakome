@@ -14,12 +14,15 @@
     display: inline;
 }
 
-.btn-delete {
-    display: none;
-    position: absolute;
-    left: 95%;
+.author-btn-container {
+    display: flex;
+    justify-content: flex-end;
 }
 
-.card:hover .btn-delete {
-    display: block;
+.btn-delete, .btn-edit {
+    display: none;
 }
+
+.card:hover .btn-delete, .card:hover .btn-edit {
+    display: block;
+} 
