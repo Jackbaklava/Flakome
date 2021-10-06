@@ -2,7 +2,7 @@
     "user": {
         "username": {
             "min": 2,
-            "max": 64
+            "max": 12
         },
         "password": {
             "min": 6,

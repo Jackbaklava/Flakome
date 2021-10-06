@@ -56,15 +56,41 @@ def delete_post():
     if request.method == "GET":
         return redirect(url_for("views.home"))
 
-
     res = json.loads(request.data)
     post_id = res["postId"]
-    post = Post.query.get(post_id)
 
-    if post:
+    try:
+        post = Post.query.get(post_id)
         if post.author_id == current_user.id:
             db.session.delete(post)
             db.session.commit()
             flash("Post successfully deleted.", category="success")
+    except:
+        return redirect(url_for("views.home"))
 
     return ""
+
+
+
+@views.route("/edit-post/<post_id>", methods=["GET", "POST"])
+@login_required
+def edit_post(post_id):
+    try:
+        post = Post.query.get(post_id)
+        if post.author_id != current_user.id:
+            raise Exception("User does not own the post.")
+    except:
+        return redirect(url_for("views.home"))
+
+    if request.method == "POST":
+        data = request.form
+        post.title = data.get("title")
+        post.body = data.get("body")
+        db.session.add(post)
+        db.session.commit()
+        flash("Post successfully edited", category="success")
+        return redirect(url_for("views.home"))
+
+    title = post.title
+    body = post.body
+    return render_template("edit-post.html", title_to_display=title, body_to_display=body)
