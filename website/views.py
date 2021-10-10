@@ -54,7 +54,7 @@ def delete_post():
         if post.author_id == current_user.id:
             db.session.delete(post)
             db.session.commit()
-            flash("Post successfully deleted.", category="success")
+            flash("Post deleted.", category="success")
     except:
         return redirect(url_for("views.home"))
 
@@ -81,7 +81,7 @@ def edit_post(post_id):
             post.body = data.get("body")
             db.session.add(post)
             db.session.commit()
-            flash("Post successfully edited", category="success")
+            flash("Post edited", category="success")
             return redirect(url_for("views.home"))
 
     title = post.title
