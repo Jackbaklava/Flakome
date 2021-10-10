@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 import json
 from .models import Post, current_datetime
-from .db_config import CharLimits
+from .utils import validate_post
 from . import db
 
 
@@ -20,28 +20,18 @@ def home():
 def create_post(title="", body=""):
     if request.method == "POST":
         data = request.form
-        given_title = data.get("title")
-        given_body = data.get("body")
+        title_submitted = data.get("title")
+        body_submitted = data.get("body")
+        post_is_validated = validate_post(title_submitted, body_submitted)
 
-        title_limits = CharLimits.post["title"]
-        body_limits = CharLimits.post["body"]
-
-        if (len(given_title) < title_limits["min"] or len(given_title) > title_limits["max"]):
-            flash(f"Title must be between {title_limits['min']} and {title_limits['max']} characters long.",
-                category="error")
-
-        elif (len(given_body) < body_limits["min"] or len(given_body) > body_limits["max"]):
-            flash(f"Body must be between {body_limits['min']} and {body_limits['max']} characters long.",
-                category="error")
-
-        else:
-            new_post = Post(title=given_title, body=given_body, author=current_user, date=current_datetime())
+        if post_is_validated:
+            new_post = Post(title=title_submitted, body=body_submitted, author=current_user, date=current_datetime())
             db.session.add(new_post)
             db.session.commit()
             flash("Post created.", category="success")
             return redirect(url_for("views.home"))
 
-        return redirect(url_for("views.create_post", title=given_title, body=given_body))
+        return redirect(url_for("views.create_post", title=title_submitted, body=body_submitted))
 
     return render_template(
         "create-post.html",
@@ -84,12 +74,15 @@ def edit_post(post_id):
 
     if request.method == "POST":
         data = request.form
-        post.title = data.get("title")
-        post.body = data.get("body")
-        db.session.add(post)
-        db.session.commit()
-        flash("Post successfully edited", category="success")
-        return redirect(url_for("views.home"))
+        post_is_validated = validate_post(data.get("title"), data.get("body"))
+
+        if post_is_validated:
+            post.title = data.get("title")
+            post.body = data.get("body")
+            db.session.add(post)
+            db.session.commit()
+            flash("Post successfully edited", category="success")
+            return redirect(url_for("views.home"))
 
     title = post.title
     body = post.body
